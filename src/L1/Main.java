@@ -1,21 +1,20 @@
 package L1;
 
-public class Main {
-    public static void main(String[] args) {
-        int x = 30;
-        int y = 10;
-        int z = 5;
-        System.out.println("x: " + x + ", y: " + y + ", z: " + z);
+import java.util.Scanner;
 
-        while ((x / y >= 0) && (y != 0))
-        {
-            x += 2;
-            y -= 2;
-            if (x % z != 0)
-            {
-                z--;
-            }
-            System.out.println("x: " + x + ", y: " + y + ", z: " + z);
+public class Main
+{
+    public static void main(String[] args)
+    {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("What number do you want to start at? ");
+        int userNumber = Integer.parseInt(scanner.nextLine());
+
+        /* complete me! */
+        for (int i = userNumber; i >= 0; i--) {
+            System.out.print(i + ", ");
         }
+
+        System.out.print("Time's up! " + userNumber + " seconds have passed!");
     }
 }
