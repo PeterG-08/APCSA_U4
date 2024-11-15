@@ -16,6 +16,39 @@ public class StringLoops {
     public StringLoops() {
     }
 
+    /* Returns the number of times "searchString" appears in "origString";
+   matches should NOT be case sensitive.
+
+   Examples:
+   - if searchString = "an" and origString = "Apples and bananas",
+     this method returns 3: Apples and bananas
+   - if searchString = "tat" and origString = "Ratatattat",
+     this method returns 3: Ratatattat (note that two overlap)
+   - if searchString = "lower" and origString = "sunflower",
+     this method returns 1: sunflower
+   - if searchString = "haha" and origString = "Hahahahaha",
+     this method returns 4: Hahahahaha
+(note that two overlap)
+   - if searchString = "HAHA" and origString = "Hahahahaha",
+     this method returns 4: Hahahahaha (note that two overlap)
+   - if searchString = "rain" and origString = "it’s the brain drain pain train",
+     this method returns 3: it’s the brain drain pain train
+   - if searchString = "was" and origString = "I was about to call you, wasn’t I?",
+     this method returns 2
+   - if searchString = "but" and origString = "I was about to call you, wasn’t I?",
+     this method returns 0
+   - if searchString = "i" and origString = "Supercalifragilisticexpialidocious",
+     this method returns 7
+  */
+    public int countString(String searchString, String origString) {
+        /* to be implemented */
+        searchString = searchString.toLowerCase();
+        origString = origString.toLowerCase();
+
+//        searchString.
+        return 0;
+    }
+
     /* Returns the number of vowels ("a", "e", "i", "o", "u") that appear in "origString";
     matches should NOT be case sensitive.
 
