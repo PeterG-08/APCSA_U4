@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3cd91b9d-eb9a-4de0-be29-e7446f9ae397" name="Changes" comment="did l4">
-      <change afterPath="$PROJECT_DIR$/src/MazeGenerator/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/MazeGenerator/Maze.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MazeGenerator/Node.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MazeGenerator/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MazeGenerator/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MazeGenerator/Maze.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/MazeGenerator/Maze.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,7 +33,7 @@
   <component name="GithubPullRequestsUISettings"><![CDATA[{
   "selectedUrlAndAccountId": {
     "url": "https://github.com/PeterG-08/APCSA_U4.git",
-    "accountId": "a91dae05-0fb0-45c0-9909-dd011fe28002"
+    "accountId": "a6fb153c-5cbb-4cac-81aa-870fdee4d02c"
   }
 }]]></component>
   <component name="ProjectColorInfo">{

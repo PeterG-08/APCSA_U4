@@ -2,10 +2,11 @@ package MazeGenerator;
 
 public class Main {
     public static void main(String[] args) {
-        Maze m = new Maze(10, 10);
+        Maze maze = new Maze(11, 11);
 
-        m.reset();
+        maze.reset();
+        maze.display();
 
-        m.displayGrid();
+        maze.regenerate();
     }
 }

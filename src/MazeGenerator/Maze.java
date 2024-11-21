@@ -6,8 +6,10 @@ public class Maze {
     private final int width;
     private final int height;
 
-    private Node[][] nodeGrid;
-    private String[][] displayGrid;
+    private final Node[][] nodeGrid;
+    private final String[][] displayGrid;
+
+    private Coordinates currentCoords;
 
     /**
      * The coordinates of a single Node in the grid.
@@ -46,33 +48,14 @@ public class Maze {
      */
     private static class Node {
         public final NodeType type;
-        public final Coordinates coords;
 
         public boolean visited = false;
 
-        public Node(NodeType type, Coordinates coords) {
+        public Node(NodeType type) {
             this.type = type;
-            this.coords = coords;
         }
 
-        /**
-         * Returns the coordinates for the cell adjacent to this node. (ensures to jump over walls)
-         */
-        public Coordinates adjacent(Direction direction) {
-            return switch (direction) {
-                case UP -> new Coordinates(coords.x, coords.y - 2);
-
-                case DOWN -> new Coordinates(coords.x, coords.y + 2);
-
-                case LEFT -> new Coordinates(coords.x - 2, coords.y);
-
-                case RIGHT -> new Coordinates(coords.x + 2, coords.y);
-
-                default -> null;
-            };
-        }
-
-        public String display() {
+        public String displayEmoji() {
             return type.display;
         }
     }
@@ -91,32 +74,95 @@ public class Maze {
         nodeGrid = new Node[height][width];
     }
 
-    private void initDisplayGrid() {
+    // get the node at the given coordinates
+    private Node getNode(Coordinates coords) {
+        return nodeGrid[coords.y][coords.x];
+    }
+
+    // Returns the coordinates for the cell adjacent to a node. (ensures to jump over walls)
+    private Coordinates adjacentNode(Coordinates coords, Direction direction) {
+        return switch (direction) {
+            case UP -> new Coordinates(coords.x, coords.y - 2);
+
+            case DOWN -> new Coordinates(coords.x, coords.y + 2);
+
+            case LEFT -> new Coordinates(coords.x - 2, coords.y);
+
+            case RIGHT -> new Coordinates(coords.x + 2, coords.y);
+
+            default -> new Coordinates(0, 0);
+        };
+    }
+
+    // reset the node grid to a grid of cells and walls
+    private void resetNodeGrid() {
+        // upper and lower rows of just walls
+        Node[] closingRow = new Node[width];
+        Arrays.fill(closingRow, new Node(NodeType.Wall));
+
+        Node[] regularRow = new Node[width];
+
+        // create a regular row of alternating wall and cell nodes
+        for (int i=0; i < width; i++) {
+            if (i % 2 == 0) {
+                regularRow[i] = new Node(NodeType.Wall);
+            } else {
+                regularRow[i] = new Node(NodeType.Cell);
+            }
+        }
+
+        // set upper and lower rows
+        nodeGrid[0] = closingRow;
+        nodeGrid[height - 1] = closingRow;
+
+        // set every other row
+        for (int i=1; i < height-1; i++) {
+            nodeGrid[i] = regularRow;
+        }
+    }
+
+    // reset the display grid so it matches the node grid
+    private void resetDisplayGrid() {
         for (int i=0; i < height; i++) {
             for (int j=0; j < width; j++) {
-                displayGrid[i][j] = nodeGrid[i][j].display();
+                displayGrid[i][j] = nodeGrid[i][j].displayEmoji();
             }
         }
     }
 
-    public void displayGrid() {
+    /**
+     * Displays the grid.
+     */
+    public void display() {
         for (int i=0; i < height; i++) {
             for (int j=0; j < width; j++) {
                 System.out.print(displayGrid[i][j]);
             }
+
             System.out.println();
         }
     }
 
     /**
-     * Clears the grid to make a grid of walls and cells.
+     * Regenerates the maze.
+     */
+    public void regenerate() {
+        for (Direction direction : Direction.values()) {
+            Coordinates adjacentCoords = adjacentNode(currentCoords, direction);
+            Node adjacent = getNode(adjacentCoords); // TODO null warning thing
+
+            if (!adjacent.visited) {
+                currentCoords = adjacentCoords;
+                regenerate();
+            }
+        }
+    }
+
+    /**
+     * Clears and resets the grid to make a grid of walls and cells.
      */
     public void reset() {
-//        displayGrid =
-        Node[] row = new Node[width];
-        Arrays.fill(row, new Node(NodeType.Cell, new Coordinates(1, 2)));
-        Arrays.fill(nodeGrid, row);
-
-        initDisplayGrid();
+        resetNodeGrid();
+        resetDisplayGrid();
     }
 }
