@@ -6,7 +6,5 @@ public class Main {
 
         maze.reset();
         maze.display();
-
-        maze.regenerate();
     }
 }
