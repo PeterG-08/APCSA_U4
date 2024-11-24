@@ -2,13 +2,12 @@ package MazeGenerator;
 
 public class Main {
     public static void main(String[] args) {
-        Maze maze = new Maze(5, 5);
+        Maze maze = new Maze(
+            71, 
+            31
+        );
 
-        // maze.display();
-        // System.out.println();
-
-        maze.regenerate(0, 0);
-        // maze.setNode(0, 0, )
+        maze.regenerate();
 
         maze.display();
     }

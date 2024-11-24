@@ -2,27 +2,41 @@ package MazeGenerator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class Maze {
-    private final static int CELL = 1;
-    private final static int VISITED = 2;
-    private final static int WALL = 3;
-
-    private final static Map<Integer, String> EMOJIS = new HashMap<Integer, String>() {{
-        put(CELL, "⬜");
-        put(VISITED, "⬜");
-        put(WALL, "⬛");
-    }};
-
     private final int width;
     private final int height;
 
-    private final int[][] nodeGrid;
+    private final int startX;
+    private final int startY;
+
+    // not final as these might to be regenerated
+    private int endX;
+    private int endY;
+
+    private final Node[][] nodeGrid;
     private final String[][] displayGrid;
+
+    /**
+     * Represents a single node in the grid.
+     */
+    private enum Node {
+        CELL("⬜", true),
+        START("🟩", true), // same function as a cell
+        END("🟥", false), // same function as a wall
+        WALL("⬛", false);
+
+        /** Whether this node has been visited yet or not by the algorithm. */
+        public final boolean visited;
+
+        public final String emoji;
+
+        private Node(String emoji, boolean visited) {
+            this.emoji = emoji;
+            this.visited = visited;
+        }
+    }
 
     /**
      * Directions related to a single Node.
@@ -40,22 +54,41 @@ public class Maze {
      * @param width The width of the Maze.
      * @param height The height of the Maze.
      */
-    public Maze(int width, int height) {
+    public Maze(
+        int width, 
+        int height
+    ) {
         this.width = width;
         this.height = height;
 
+        startX = (int) (Math.random() * width);
+        startY = (int) (Math.random() * height);
+
+        generateEndCoords();
+        
         displayGrid = new String[height][width];
-        nodeGrid = new int[height][width];
+        nodeGrid = new Node[height][width];
 
         reset();
     }
 
+    private void generateEndCoords() {
+        endX = (int) (Math.random() * width);
+        endY = (int) (Math.random() * height);
 
-    private int getNode(int x, int y) {
+        if (endX == startX && endY == startY) {
+            generateEndCoords();
+        }
+
+        return;
+    }
+
+
+    private Node getNode(int x, int y) {
         return nodeGrid[y][x];
     }
 
-    public void setNode(int x, int y, int node) {
+    public void setNode(int x, int y, Node node) {
         nodeGrid[y][x] = node;
     }
 
@@ -67,12 +100,7 @@ public class Maze {
     private void resetNodeGrid() {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                // if (j % 2 == 1 && i % 2 == 1) {
-                //     setNode(j, i, CELL);
-                // } else {
-                //     setNode(j, i, WALL);
-                // }
-                setNode(j, i, WALL);
+                setNode(j, i, Node.WALL);
             }
         }
     }
@@ -81,30 +109,14 @@ public class Maze {
     private void resetDisplayGrid() {
         for (int i=0; i < height; i++) {
             for (int j=0; j < width; j++) {
-                displayGrid[i][j] = EMOJIS.get(nodeGrid[i][j]);
+                displayGrid[i][j] = getNode(j, i).emoji;
             }
         }
     }
 
-    /**
-     * Displays the grid.
-     */
-    public void display() {
-        for (int i=0; i < height; i++) {
-            for (int j=0; j < width; j++) {
-                System.out.print(displayGrid[i][j]);
-            }
-
-            System.out.println();
-        }
-    }
-
-    /**
-     * Regenerates the maze.
-     */
-    public void regenerate(int x, int y) {
+    private void regenerate(int x, int y) {
         // this node is now a visited cell
-        setNode(x, y, VISITED);
+        setNode(x, y, Node.CELL);
 
         List<Direction> possibleDirections = new ArrayList<Direction>(Arrays.asList(Direction.values()));
 
@@ -167,16 +179,44 @@ public class Maze {
             }
 
             // if possible to carve in this direction, then do it
-            if (!(getNode(newX, newY) == VISITED)) {
-                setNode(adjX, adjY, VISITED);
+            if (!(getNode(newX, newY).visited)) {
+                setNode(adjX, adjY, Node.CELL);
                 
                 regenerate(newX, newY);
             }
         }
 
         // if none of the directions worked, then the maze has been generated!
-        resetDisplayGrid();
         return;
+    }
+
+    /**
+     * Displays the grid.
+     */
+    public void display() {
+        for (int i=0; i < height; i++) {
+            for (int j=0; j < width; j++) {
+                System.out.print(displayGrid[i][j]);
+            }
+
+            System.out.println();
+        }
+    }
+
+    /**
+     * Regenerates the maze.
+     */
+    public void regenerate() {
+        setNode(startX, startY, Node.START);
+        setNode(endX, endY, Node.END);
+
+        regenerate(startX, startY);
+
+        // necessary re-coloring
+        setNode(startX, startY, Node.START);
+        setNode(endX, endY, Node.END);
+
+        resetDisplayGrid();
     }
 
     /**
