@@ -3,6 +3,7 @@ package MazeGenerator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 public class Maze {
     private final int width;
@@ -18,10 +19,15 @@ public class Maze {
     private final Node[][] nodeGrid;
     private final String[][] displayGrid;
 
+    private final GenerationControl control;
+
+    private final Scanner controlScanner = new Scanner(System.in);
+
     /**
      * Represents a single node in the grid.
      */
     private enum Node {
+        PLAYER("😲", false), // "visited" serves no function here
         CELL("⬜", true),
         START("🟩", true), // same function as a cell
         END("🟥", false), // same function as a wall
@@ -49,17 +55,42 @@ public class Maze {
     }
 
     /**
+     * Lets the user control maze generation.
+     */
+    public enum GenerationControl {
+        /** User doesn't do anything, maze is just generated and displayed. */
+        NONE,
+
+        /** Prints each step with a time sleep. */
+        PRINT,
+
+        /** Lets the user "step" each generation iteration. Hitting "enter" will step. */
+        STEP
+    }
+
+    /** Sleep for some time. */
+    private static void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {}
+    }
+
+    /**
      * Creates a new Maze object with given parameters.
      *
      * @param width The width of the Maze.
      * @param height The height of the Maze.
+     * @param control The user's control over the maze generation.
      */
     public Maze(
         int width, 
-        int height
+        int height,
+        GenerationControl control
     ) {
         this.width = width;
         this.height = height;
+
+        this.control = control;
 
         startX = (int) (Math.random() * width);
         startY = (int) (Math.random() * height);
@@ -182,6 +213,30 @@ public class Maze {
             if (!(getNode(newX, newY).visited)) {
                 setNode(adjX, adjY, Node.CELL);
                 
+                switch (control) {
+                    case NONE:
+                        break;
+                
+                    case PRINT:
+                        resetDisplayGrid();
+                        display();
+                        sleep(100);
+                        System.out.print("\033\143"); // TODO this is linux only!
+
+                        break;
+
+                    case STEP:
+                        resetDisplayGrid();
+                        display();
+                        controlScanner.nextLine();
+                        System.out.print("\033\143"); // TODO this is linux only!
+
+                        break;
+
+                    default:
+                        break;
+                }
+
                 regenerate(newX, newY);
             }
         }
