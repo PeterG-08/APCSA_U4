@@ -280,17 +280,21 @@ public class Maze {
      * Displays the grid.
      */
     public void display() {
+        String disp = "";
+
         resetDisplayGrid();
 
         displayGrid[playerY][playerX] = PLAYER;
 
         for (int i=0; i < height; i++) {
             for (int j=0; j < width; j++) {
-                System.out.print(displayGrid[i][j]);
+                disp += displayGrid[i][j];
             }
 
-            System.out.println();
+            disp += "\n";
         }
+
+        System.out.println(disp);
     }
 
     /**

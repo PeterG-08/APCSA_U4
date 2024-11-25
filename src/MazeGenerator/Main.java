@@ -14,7 +14,7 @@ public class Main {
         final Maze maze = new Maze(
             70, 
             30,
-            GenerationControl.NONE
+            GenerationControl.PRINT
         );
 
         maze.regenerate();
