@@ -6,20 +6,22 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Maze {
-    private final String PLAYER = "😲";
+    private final static String START = "🟩";
+    private final static String END = "🟥";
+
+    private final static String PLAYER = "😲";
 
     private final int width;
     private final int height;
 
-    private final int startX;
-    private final int startY;
+    private int playerX = 0;
+    private int playerY = 0;
 
-    private int playerX;
-    private int playerY;
+    private int startX = 0;
+    private int startY = 0;
 
-    // not final as these might to be regenerated
-    private int endX;
-    private int endY;
+    private int endX = 0;
+    private int endY = 0;
 
     private final Node[][] nodeGrid;
     private final String[][] displayGrid;
@@ -33,8 +35,6 @@ public class Maze {
      */
     private enum Node {
         CELL("⬜", true),
-        START("🟩", true), // same function as a cell
-        END("🟥", false), // same function as a wall
         WALL("⬛", false);
 
         /** Whether this node has been visited yet or not by the algorithm. */
@@ -81,7 +81,8 @@ public class Maze {
 
     /** Clears the console. */
     public static void clear() {
-        System.out.print("\033\143"); // TODO this is linux only!
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
     }
 
     /**
@@ -101,37 +102,33 @@ public class Maze {
 
         this.control = control;
 
-        startX = (int) (Math.random() * width);
-        startY = (int) (Math.random() * height);
-
-        this.playerX = this.startX;
-        this.playerY = this.startY;
-
-        generateEnd();
-        
         displayGrid = new String[height][width];
         nodeGrid = new Node[height][width];
 
-        reset();
+        resetNodeGrid();
+        resetDisplayGrid();
     }
 
     private void generateEnd() {
         endX = (int) (Math.random() * width);
         endY = (int) (Math.random() * height);
 
+        Node node = getNode(endX, endY);
+
         if (endX == startX && endY == startY) {
             generateEnd();
         }
 
-        return;
+        if (node == Node.WALL) {
+            generateEnd();
+        }
     }
-
 
     private Node getNode(int x, int y) {
         return nodeGrid[y][x];
     }
 
-    public void setNode(int x, int y, Node node) {
+    private void setNode(int x, int y, Node node) {
         nodeGrid[y][x] = node;
     }
 
@@ -164,7 +161,7 @@ public class Maze {
         List<Direction> possibleDirections = new ArrayList<Direction>(Arrays.asList(Direction.values()));
 
         // check all directions
-        while (possibleDirections.size() > 0) {
+        while (!possibleDirections.isEmpty()) {
             // choose random direction
             int index = (int) (Math.random() * possibleDirections.size());
             Direction direction = possibleDirections.get(index);
@@ -284,6 +281,9 @@ public class Maze {
 
         resetDisplayGrid();
 
+        displayGrid[startY][startX] = START;
+        displayGrid[endY][endX] = END;
+
         displayGrid[playerY][playerX] = PLAYER;
 
         for (int i=0; i < height; i++) {
@@ -301,23 +301,17 @@ public class Maze {
      * Regenerates the maze.
      */
     public void regenerate() {
-        setNode(startX, startY, Node.START);
-        setNode(endX, endY, Node.END);
+        startX = (int) (Math.random() * width);
+        startY = (int) (Math.random() * height);
 
         regenerate(startX, startY);
 
-        // necessary re-coloring
-        setNode(startX, startY, Node.START);
-        setNode(endX, endY, Node.END);
+        // reset other emoji locations
+        generateEnd();
 
-        resetDisplayGrid();
-    }
+        playerX = startX;
+        playerY = startY;
 
-    /**
-     * Clears and resets the grid to make a grid of walls and cells.
-     */
-    public void reset() {
-        resetNodeGrid();
         resetDisplayGrid();
     }
 }

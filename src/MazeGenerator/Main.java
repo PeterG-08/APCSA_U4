@@ -12,16 +12,16 @@ public class Main {
         final Scanner input = new Scanner(System.in);
 
         final Maze maze = new Maze(
-            70, 
+            50,
             30,
-            GenerationControl.PRINT
+            GenerationControl.NONE // control how the maze is generated
         );
 
         maze.regenerate();
-
         maze.display();
 
-        while (!maze.won()) {            
+        while (true) {
+            System.out.print("Enter WASD: ");
             String move = input.nextLine();
 
             switch (move) {
@@ -42,14 +42,18 @@ public class Main {
                     break;
 
                 default:
-                    break;
+                    continue;
             }
 
             clear();
             maze.display();
 
-            sleep(1000);
+//            sleep(500);
+
+            if (maze.won()) break;
         }
+
+        System.out.println("YOU WON!!!");
 
         input.close();
     }
