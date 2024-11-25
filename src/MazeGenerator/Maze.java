@@ -6,11 +6,16 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Maze {
+    private final String PLAYER = "😲";
+
     private final int width;
     private final int height;
 
     private final int startX;
     private final int startY;
+
+    private int playerX;
+    private int playerY;
 
     // not final as these might to be regenerated
     private int endX;
@@ -27,7 +32,6 @@ public class Maze {
      * Represents a single node in the grid.
      */
     private enum Node {
-        PLAYER("😲", false), // "visited" serves no function here
         CELL("⬜", true),
         START("🟩", true), // same function as a cell
         END("🟥", false), // same function as a wall
@@ -69,10 +73,15 @@ public class Maze {
     }
 
     /** Sleep for some time. */
-    private static void sleep(long millis) {
+    public static void sleep(long millis) {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {}
+    }
+
+    /** Clears the console. */
+    public static void clear() {
+        System.out.print("\033\143"); // TODO this is linux only!
     }
 
     /**
@@ -95,7 +104,10 @@ public class Maze {
         startX = (int) (Math.random() * width);
         startY = (int) (Math.random() * height);
 
-        generateEndCoords();
+        this.playerX = this.startX;
+        this.playerY = this.startY;
+
+        generateEnd();
         
         displayGrid = new String[height][width];
         nodeGrid = new Node[height][width];
@@ -103,12 +115,12 @@ public class Maze {
         reset();
     }
 
-    private void generateEndCoords() {
+    private void generateEnd() {
         endX = (int) (Math.random() * width);
         endY = (int) (Math.random() * height);
 
         if (endX == startX && endY == startY) {
-            generateEndCoords();
+            generateEnd();
         }
 
         return;
@@ -218,18 +230,16 @@ public class Maze {
                         break;
                 
                     case PRINT:
-                        resetDisplayGrid();
                         display();
                         sleep(100);
-                        System.out.print("\033\143"); // TODO this is linux only!
+                        clear();
 
                         break;
 
                     case STEP:
-                        resetDisplayGrid();
                         display();
                         controlScanner.nextLine();
-                        System.out.print("\033\143"); // TODO this is linux only!
+                        clear();
 
                         break;
 
@@ -241,14 +251,39 @@ public class Maze {
             }
         }
 
-        // if none of the directions worked, then the maze has been generated!
+        // if all the directions have been visited, then the maze has been generated!
         return;
+    }
+
+    /**
+     * Whether the player won, meaning that the player is at the end.
+     */
+    public boolean won() {
+       return playerX == endX && playerY == endY;
+    }
+
+    /**
+     * Moves the player's coordinates only if they are in bounds / only if the player can move there (no wall).
+     */
+    public void movePlayer(int x, int y) {
+        int movedX = playerX + x;
+        int movedY = playerY + y;
+
+        if (!inBounds(movedX, movedY)) return;
+        if (getNode(movedX, movedY) == Node.WALL) return;
+        
+        playerX = movedX;
+        playerY = movedY;
     }
 
     /**
      * Displays the grid.
      */
     public void display() {
+        resetDisplayGrid();
+
+        displayGrid[playerY][playerX] = PLAYER;
+
         for (int i=0; i < height; i++) {
             for (int j=0; j < width; j++) {
                 System.out.print(displayGrid[i][j]);
