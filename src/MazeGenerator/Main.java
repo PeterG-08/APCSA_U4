@@ -11,15 +11,19 @@ public class Main {
         final Scanner input = new Scanner(System.in);
 
         final Maze maze = new Maze(
-            100,
-            40,
-            GenerationControl.NONE // control how the maze is generated
+            10,
+            10,
+            GenerationControl.STEP // control how the maze is generated
         );
 
         int attempt = 1;
 
+        System.out.print("Enter your name: ");
+        String name = input.nextLine();
+        System.out.println("Wow! your name has " + name.length() + " letters!");
+
         maze.regenerate();
-        maze.display();
+        System.out.println(maze);
 
         while (true) {
             System.out.print("(ATTEMPT " + attempt + ") " + " Enter wasd: ");
@@ -47,7 +51,7 @@ public class Main {
             }
 
             clear();
-            maze.display();
+            System.out.println(maze);
 
             if (maze.won()) break;
 

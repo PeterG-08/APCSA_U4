@@ -220,7 +220,9 @@ public class Maze {
 
             // if possible to carve in this direction, then do it
             if (!(getNode(newX, newY).visited)) {
-                // System.out.println(direction);
+                System.out.println(direction);
+                System.out.println(newX + " " + newY);
+                System.out.println(getNode(newX, newY));
 
                 setNode(adjX, adjY, Node.CELL);
                 
@@ -229,14 +231,14 @@ public class Maze {
                         break;
                 
                     case PRINT:
-                        display();
+                        System.out.println(this);
                         sleep(100);
                         clear();
 
                         break;
 
                     case STEP:
-                        display();
+                        System.out.println(this);
                         controlScanner.nextLine();
                         clear();
 
@@ -275,10 +277,8 @@ public class Maze {
         playerY = movedY;
     }
 
-    /**
-     * Displays the grid.
-     */
-    public void display() {
+    @Override
+    public String toString() {
         String disp = "";
 
         resetDisplayGrid();
@@ -296,7 +296,7 @@ public class Maze {
             disp += "\n";
         }
 
-        System.out.println(disp);
+        return disp;
     }
 
     /**
