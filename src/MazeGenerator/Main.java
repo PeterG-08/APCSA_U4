@@ -1,7 +1,6 @@
 package MazeGenerator;
 
 import static MazeGenerator.Maze.clear;
-import static MazeGenerator.Maze.sleep;
 
 import java.util.Scanner;
 
@@ -14,7 +13,7 @@ public class Main {
         final Maze maze = new Maze(
             50,
             30,
-            GenerationControl.NONE // control how the maze is generated
+            GenerationControl.STEP // control how the maze is generated
         );
 
         maze.regenerate();
@@ -47,8 +46,6 @@ public class Main {
 
             clear();
             maze.display();
-
-//            sleep(500);
 
             if (maze.won()) break;
         }
