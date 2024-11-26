@@ -220,6 +220,8 @@ public class Maze {
 
             // if possible to carve in this direction, then do it
             if (!(getNode(newX, newY).visited)) {
+                System.out.println(direction);
+
                 setNode(adjX, adjY, Node.CELL);
                 
                 switch (control) {
